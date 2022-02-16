@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::middleware(['jwt', 'is_admin'])->get('/user/login', 'User\LoginController@login');
+Route::middleware(['jwt', 'role:user'])->get('/user/login', 'User\LoginController@login');
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
