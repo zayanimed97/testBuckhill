@@ -33,6 +33,12 @@ Route::middleware(['jwt', 'role:user'])->prefix('user')->group(function () {
     Route::get('/orders', 'User\UserController@orders');
 });
 
+Route::prefix('main')->group(function(){
+    Route::get('promotions', 'MainPageController@promotions');
+    Route::get('blog', 'MainPageController@blog');
+    Route::get('blog/{uuid}', 'MainPageController@blogPost');
+});
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
