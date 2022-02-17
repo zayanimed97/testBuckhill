@@ -9,6 +9,8 @@ use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use App\Models\User;
+use Exception;
+use InvalidArgumentException;
 
 class jwt
 {
@@ -29,12 +31,15 @@ class jwt
             // You may also override the JOSE encoder/decoder if needed by providing extra arguments here
         );
 
-        $bearer = $request->bearerToken();
+        $bearer = $request->bearerToken() ?? '';
 
-
-        $token = $config->parser()->parse(
-            $bearer
-        );
+        try{
+            $token = $config->parser()->parse(
+                $bearer
+            );
+        } catch(InvalidArgumentException $e){
+            return response()->json('Invalid Token', 401);
+        }
         
         if($token instanceof UnencryptedToken) {
 
@@ -48,6 +53,6 @@ class jwt
         
         }
 
-        return response()->json('Invalid Token', 403);
+        return response()->json('Invalid Token', 401);
     }
 }

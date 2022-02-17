@@ -15,7 +15,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::middleware(['jwt', 'role:user'])->get('/user/login', 'User\LoginController@login');
+
+Route::middleware(['jwt', 'role:admin'])->prefix('admin')->group(function () {
+    Route::post('/create', 'Admin\AdminController@create');
+    Route::get('/user-listing', 'Admin\AdminController@user_listing');
+    Route::post('/login', 'Admin\AdminController@login')->withoutMiddleware(['jwt','role']);
+});
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
