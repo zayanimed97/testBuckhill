@@ -39,6 +39,15 @@ Route::prefix('main')->group(function(){
     Route::get('blog/{uuid}', 'MainPageController@blogPost');
 });
 
+Route::middleware(['jwt', 'role:admin'])->prefix('category')->group(function () {
+    Route::post('/create', 'Admin\CategoriesController@create');
+    Route::put('/{uuid}', 'Admin\CategoriesController@update');
+    Route::delete('/{uuid}', 'Admin\CategoriesController@delete');
+    Route::get('/{uuid}', 'Admin\CategoriesController@getCategory')->withoutMiddleware(['jwt','role:admin']);
+});
+Route::get('/categories', 'Admin\CategoriesController@categories');
+
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
