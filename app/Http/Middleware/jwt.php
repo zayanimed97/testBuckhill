@@ -38,13 +38,12 @@ class jwt
                 $bearer
             );
         } catch(InvalidArgumentException $e){
-            return response()->json('Invalid Token', 401);
+            return response()->json('Invalid Token Format', 401);
         }
         
         if($token instanceof UnencryptedToken) {
 
         $uuid = $token->claims()->get('user_uuid');
-
         $user = User::where('uuid', $uuid)->first();
         if ($user) {
             $request->session()->put('user', $user);
