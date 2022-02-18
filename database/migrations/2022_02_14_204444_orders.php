@@ -22,7 +22,7 @@ class Orders extends Migration
             $table->json('products');
             $table->json('address');
             $table->float('delivery_fee')->nullable();
-            $table->float('amount')->unique();
+            $table->float('amount');
             $table->timestamp('shipped_at')->nullable();
             $table->timestamps();
         });

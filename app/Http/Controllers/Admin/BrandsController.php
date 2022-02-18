@@ -3,18 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
+use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
-class CategoriesController extends Controller
+class BrandsController extends Controller
 {
     /**
      * @OA\Post(
-     *     tags={"Categories"},
-     *     path="/api/v1/category/create",
-     *     summary="Create category",
+     *     tags={"Brands"},
+     *     path="/api/v1/brand/create",
+     *     summary="Create brand",
      *     security={ {"bearer": {}} },
      *      @OA\RequestBody(
      *          @OA\MediaType(
@@ -24,7 +24,7 @@ class CategoriesController extends Controller
      *                  type="object",
      *                  @OA\Property(
      *                     property="title",
-     *                     description="Category title",
+     *                     description="Brand title",
      *                     type="string"
      *                  ),
      *             )
@@ -59,11 +59,11 @@ class CategoriesController extends Controller
         ]);
 
         if (!$validated->fails()) {
-            $category = new Category();
-            $category->uuid = (string) Str::uuid();
-            $category->title = $request->title;
-            $category->slug = Str::slug($request->title);
-            $category->save();
+            $brand = new Brand();
+            $brand->uuid = (string) Str::uuid();
+            $brand->title = $request->title;
+            $brand->slug = Str::slug($request->title);
+            $brand->save();
         } else {
             return response()->json($validated->errors(), 422);
         }
@@ -71,9 +71,9 @@ class CategoriesController extends Controller
 
     /**
      * @OA\Put(
-     *     tags={"Categories"},
-     *     path="/api/v1/category/{uuid}",
-     *     summary="Login an admin account",
+     *     tags={"Brands"},
+     *     path="/api/v1/brand/{uuid}",
+     *     summary="Update a brand",
      *     security={ {"bearer": {}} },
      *     @OA\Parameter(
      *         name="uuid",
@@ -91,7 +91,7 @@ class CategoriesController extends Controller
      *                  type="object",
      *                  @OA\Property(
      *                     property="title",
-     *                     description="Category title",
+     *                     description="Brand title",
      *                     type="string"
      *                  ),
      *             )
@@ -126,13 +126,13 @@ class CategoriesController extends Controller
         ]);
 
         if (!$validated->fails()) {
-            $category = Category::where('uuid', $uuid)->first();
-            if ($category) {
-                $category->title = $request->title;
-                $category->slug = Str::slug($request->title);
-                $category->update();
+            $brand = Brand::where('uuid', $uuid)->first();
+            if ($brand) {
+                $brand->title = $request->title;
+                $brand->slug = Str::slug($request->title);
+                $brand->update();
             } else {
-                return response()->json('Inexisting category', 404);
+                return response()->json('Inexisting brand', 404);
             }
         } else {
             return response()->json($validated->errors(), 422);
@@ -141,9 +141,9 @@ class CategoriesController extends Controller
 
     /**
      * @OA\Delete(
-     *     tags={"Categories"},
-     *     path="/api/v1/category/{uuid}",
-     *     summary="Delete Category",
+     *     tags={"Brands"},
+     *     path="/api/v1/brand/{uuid}",
+     *     summary="Delete Brand",
      *     security={ {"bearer": {}} },
      *     @OA\Parameter(
      *         name="uuid",
@@ -177,11 +177,11 @@ class CategoriesController extends Controller
      */
     public function delete($uuid)
     {
-        $category = Category::where('uuid', $uuid)->first();
-        if ($category) {
-            $category->delete();
+        $brand = Brand::where('uuid', $uuid)->first();
+        if ($brand) {
+            $brand->delete();
         } else {
-            return response()->json("inexisting category", 404);
+            return response()->json("inexisting brand", 404);
         }
 
         return response()->json([]);
@@ -189,9 +189,9 @@ class CategoriesController extends Controller
 
     /**
      * @OA\Get(
-     *     tags={"Categories"},
-     *     path="/api/v1/category/{uuid}",
-     *     summary="Fetch a category",
+     *     tags={"Brands"},
+     *     path="/api/v1/brand/{uuid}",
+     *     summary="Fetch a brand",
      *     @OA\Parameter(
      *         name="uuid",
      *         in="path",
@@ -221,20 +221,20 @@ class CategoriesController extends Controller
      *     ),
      * )
      */
-    public function getCategory($uuid)
+    public function getBrand($uuid)
     {
-        $category = Category::where('uuid', $uuid)->first();
-        if (!$category) {
-            return response()->json("Inexisting category", 404);
+        $brand = Brand::where('uuid', $uuid)->first();
+        if (!$brand) {
+            return response()->json("Inexisting brand", 404);
         }
-        return response()->json($category);
+        return response()->json($brand);
     }
 
                 /**
      * @OA\Get(
-     *     tags={"Categories"},
-     *     path="/api/v1/categories",
-     *     summary="List all categories",
+     *     tags={"Brands"},
+     *     path="/api/v1/brands",
+     *     summary="List all brands",
      *     @OA\Parameter(
      *         name="page",
      *         in="query",
@@ -285,23 +285,23 @@ class CategoriesController extends Controller
      *     ),
      * )
      */
-    public function categories(Request $request)
+    public function brands(Request $request)
     {
-        $categories = new Category();
+        $brands = new Brand();
 
         if ($request->has('sortBy')) {
             if (($request->desc ?? false) == 'true') {
-                $categories = $categories->orderBy($request->sortBy, 'desc');
+                $brands = $brands->orderBy($request->sortBy, 'desc');
             } else {
-                $categories = $categories->orderBy($request->sortBy);
+                $brands = $brands->orderBy($request->sortBy);
             }
         }
 
 
-        $categories = $categories->paginate($request->limit ?? 10);
+        $brands = $brands->paginate($request->limit ?? 10);
 
         
 
-        return response()->json($categories);
+        return response()->json($brands);
     }
 }

@@ -47,6 +47,19 @@ Route::middleware(['jwt', 'role:admin'])->prefix('category')->group(function () 
 });
 Route::get('/categories', 'Admin\CategoriesController@categories');
 
+Route::middleware(['jwt', 'role:admin'])->prefix('brand')->group(function () {
+    Route::post('/create', 'Admin\BrandsController@create');
+    Route::put('/{uuid}', 'Admin\BrandsController@update');
+    Route::delete('/{uuid}', 'Admin\BrandsController@delete');
+    Route::get('/{uuid}', 'Admin\BrandsController@getBrand')->withoutMiddleware(['jwt','role:admin']);
+});
+Route::get('/brands', 'Admin\BrandsController@brands');
+
+// Orders
+Route::get('/order/{uuid}', 'OrdersController@getOrder')->middleware(['jwt','role:admin']);
+Route::get('/orders', 'OrdersController@orders')->middleware(['jwt','role:admin']);
+Route::post('/order/create', 'OrdersController@create')->middleware(['jwt','role:user']);
+Route::put('/order/{uuid}', 'OrdersController@update')->middleware(['jwt','role:user']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
