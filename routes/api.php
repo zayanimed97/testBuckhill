@@ -68,3 +68,11 @@ Route::delete('/order/delete/{uuid}', 'OrdersController@delete');
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::middleware(['jwt', 'role:admin'])->prefix('order-status')->group(function () {
+    Route::post('/create', 'OrderStatusesController@create');
+    Route::put('/{uuid}', 'OrderStatusesController@update');
+    Route::delete('/{uuid}', 'OrderStatusesController@delete');
+    Route::get('/{uuid}', 'OrderStatusesController@getOrderStatus')->withoutMiddleware(['jwt','role:admin']);
+});
+Route::get('/order-statuses', 'OrderStatusesController@orderStatuses');
