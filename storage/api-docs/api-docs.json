@@ -883,7 +883,7 @@
                     "Order Statuses"
                 ],
                 "summary": "Create Order Status",
-                "operationId": "b60c43d706a4c1ac82af366491da28d9",
+                "operationId": "1c76aef54d310848551d80df0763e713",
                 "requestBody": {
                     "content": {
                         "application/x-www-form-urlencoded": {
@@ -932,7 +932,7 @@
                     "Order Statuses"
                 ],
                 "summary": "Fetch an Order Status",
-                "operationId": "fb48a6985a91a5b0b302054259cf641b",
+                "operationId": "693535d7fb8c7c63e776e444c66e4619",
                 "parameters": [
                     {
                         "name": "uuid",
@@ -965,7 +965,7 @@
                     "Order Statuses"
                 ],
                 "summary": "Update Order Status",
-                "operationId": "234298a8f11c0e13d57fb5028e063a5c",
+                "operationId": "bcdfcf2fdf16bd1dd3c099cced96d53e",
                 "parameters": [
                     {
                         "name": "uuid",
@@ -1022,7 +1022,7 @@
                     "Order Statuses"
                 ],
                 "summary": "Delete Order Status",
-                "operationId": "dded86fbc6d8d09f0c208d3e5f8da069",
+                "operationId": "f04e973453f934d632797a3ea9ab29a9",
                 "parameters": [
                     {
                         "name": "uuid",
@@ -1063,7 +1063,7 @@
                     "Order Statuses"
                 ],
                 "summary": "List all Order Statuses",
-                "operationId": "56fc0d2d979ff79b66b0d07de831b7a2",
+                "operationId": "2ed99daebe2e784f6a8e8d2bb9d8af5c",
                 "parameters": [
                     {
                         "name": "page",
@@ -1637,6 +1637,257 @@
                         "bearer": []
                     }
                 ]
+            }
+        },
+        "/api/v1/payment/create": {
+            "post": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Create Payment",
+                "operationId": "b6ce64699c752b65eee4d8bf364a3023",
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "required": [
+                                    "type",
+                                    "details"
+                                ],
+                                "properties": {
+                                    "type": {
+                                        "description": "Payment type",
+                                        "type": "string",
+                                        "enum": [
+                                            "credit_card",
+                                            "cash_on_delivery",
+                                            "bank_transfer"
+                                        ]
+                                    },
+                                    "details": {
+                                        "description": "Review documentation for the payment type JSON format",
+                                        "type": "object",
+                                        "default": "{}"
+                                    },
+                                    "title": {
+                                        "description": "Payment Title",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Page not found"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/payment/{uuid}": {
+            "get": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Fetch a Payment",
+                "operationId": "4781a03cfa223606410ad3631d125e84",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Page not found"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Update Payment",
+                "operationId": "68fb4b3811952def7f179925b3989503",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "required": [
+                                    "title"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "description": "Payment title",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Page not found"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Delete Payment",
+                "operationId": "69b06a277d04e65e9018017f3d51b0fd",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Page not found"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/payments": {
+            "get": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "List all Payments",
+                "operationId": "cae9bb886b1c7499a7b7b661cea31df0",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "desc",
+                        "in": "query",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Page not found"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
             }
         },
         "/api/v1/user/create": {

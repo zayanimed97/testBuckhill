@@ -76,3 +76,12 @@ Route::middleware(['jwt', 'role:admin'])->prefix('order-status')->group(function
     Route::get('/{uuid}', 'OrderStatusesController@getOrderStatus')->withoutMiddleware(['jwt','role:admin']);
 });
 Route::get('/order-statuses', 'OrderStatusesController@orderStatuses');
+
+
+Route::middleware(['jwt', 'role:admin'])->prefix('payment')->group(function () {
+    Route::post('/create', 'PaymentsController@create');
+    Route::put('/{uuid}', 'PaymentsController@update');
+    Route::delete('/{uuid}', 'PaymentsController@delete');
+    Route::get('/{uuid}', 'PaymentsController@getPayment')->withoutMiddleware(['jwt','role:admin']);
+});
+Route::get('/payments', 'PaymentsController@payments');
