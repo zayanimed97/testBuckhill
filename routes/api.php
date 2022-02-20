@@ -60,6 +60,10 @@ Route::get('/order/{uuid}', 'OrdersController@getOrder')->middleware(['jwt','rol
 Route::get('/orders', 'OrdersController@orders')->middleware(['jwt','role:admin']);
 Route::post('/order/create', 'OrdersController@create')->middleware(['jwt','role:user']);
 Route::put('/order/{uuid}', 'OrdersController@update')->middleware(['jwt','role:user']);
+Route::get('/orders/dashboard', 'OrdersController@dashboard');
+Route::get('/order/{uuid}/download', 'OrdersController@download');
+Route::get('/orders/shipment-locator', 'OrdersController@shipmentLocator');
+Route::delete('/order/delete/{uuid}', 'OrdersController@delete');
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
