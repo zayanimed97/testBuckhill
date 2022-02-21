@@ -11,6 +11,7 @@ use Lcobucci\JWT\Signer\Key\InMemory;
 use App\Models\User;
 use Exception;
 use InvalidArgumentException;
+use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 
 class jwt
 {
@@ -33,23 +34,35 @@ class jwt
 
         $bearer = $request->bearerToken() ?? '';
 
-        try{
+        try {
             $token = $config->parser()->parse(
                 $bearer
             );
-        } catch(InvalidArgumentException $e){
+        } catch (InvalidArgumentException $e) {
             return response()->json('Invalid Token Format', 401);
         }
-        
-        if($token instanceof UnencryptedToken) {
 
-        $uuid = $token->claims()->get('user_uuid');
-        $user = User::where('uuid', $uuid)->first();
-        if ($user) {
-            $request->session()->put('user', $user);
-            return $next($request);
-        }
-        
+        if ($token instanceof UnencryptedToken) {
+
+
+            try {
+                $clock = new class implements \Lcobucci\Clock\Clock {
+                    function now (): \DateTimeImmutable { return new \DateTimeImmutable(); }
+                };
+                $config->validator()->assert($token, new \Lcobucci\JWT\Validation\Constraint\StrictValidAt($clock));
+            } catch (RequiredConstraintsViolated $e) {
+                // list of constraints violation exceptions:
+                return response()->json('Token Expired', 401);
+            }
+
+
+            $uuid = $token->claims()->get('user_uuid');
+            // dd($token->claims());
+            $user = User::where('uuid', $uuid)->first();
+            if ($user) {
+                $request->session()->put('user', $user);
+                return $next($request);
+            }
         }
 
         return response()->json('Invalid Token', 401);
