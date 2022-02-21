@@ -93,3 +93,8 @@ Route::middleware(['jwt', 'role:admin'])->prefix('product')->group(function () {
     Route::get('/{uuid}', 'ProductsController@getProduct')->withoutMiddleware(['jwt','role:admin']);
 });
 Route::get('/products', 'ProductsController@products');
+
+Route::middleware(['jwt', 'role:admin'])->prefix('file')->group(function () {
+    Route::post('/upload', 'FileController@upload');
+    Route::get('/{uuid}', 'FileController@download');
+});
