@@ -16,6 +16,7 @@ class Order extends Model
 
     protected $casts = [
         'products' => 'json',
+        'address' => 'json'
     ];
 
      
