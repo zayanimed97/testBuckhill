@@ -85,3 +85,11 @@ Route::middleware(['jwt', 'role:admin'])->prefix('payment')->group(function () {
     Route::get('/{uuid}', 'PaymentsController@getPayment')->withoutMiddleware(['jwt','role:admin']);
 });
 Route::get('/payments', 'PaymentsController@payments');
+
+Route::middleware(['jwt', 'role:admin'])->prefix('product')->group(function () {
+    Route::post('/create', 'ProductsController@create');
+    Route::put('/{uuid}', 'ProductsController@update');
+    Route::delete('/{uuid}', 'ProductsController@delete');
+    Route::get('/{uuid}', 'ProductsController@getProduct')->withoutMiddleware(['jwt','role:admin']);
+});
+Route::get('/products', 'ProductsController@products');

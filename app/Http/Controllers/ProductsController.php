@@ -4,41 +4,50 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Payment;
+use App\Models\Product;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 
-class PaymentsController extends Controller
+class ProductsController extends Controller
 {
     /**
      * @OA\Post(
-     *     tags={"Payments"},
-     *     path="/api/v1/payment/create",
-     *     summary="Create Payment",
+     *     tags={"Products"},
+     *     path="/api/v1/product/create",
+     *     summary="Create Product",
      *     security={ {"bearer": {}} },
      *      @OA\RequestBody(
      *          @OA\MediaType(
      *              mediaType="application/x-www-form-urlencoded",
      *              @OA\Schema(
-     *                  required={"type", "details"},
+     *                  required={"title","category_uuid","price","description"},
      *                  type="object",
      *                  @OA\Property(
-     *                     property="type",
-     *                     description="Payment type",
-     *                     type="string",
-     *                     enum={"credit_card", "cash_on_delivery", "bank_transfer"}
-     *                  ),
-     *                  @OA\Property(
-     *                     property="details",
-     *                     description="Review documentation for the payment type JSON format",
-     *                     type="object",
-     *                     default="{}"
-     *                  ),
-     *                  @OA\Property(
      *                     property="title",
-     *                     description="Payment Title",
-     *                     type="string",
+     *                     description="Product title",
+     *                     type="string"
+     *                  ),
+     *                  @OA\Property(
+     *                     property="category_uuid",
+     *                     description="Category UUID",
+     *                     type="string"
+     *                  ),
+     *                  @OA\Property(
+     *                     property="price",
+     *                     description="Product price",
+     *                     type="number"
+     *                  ),
+     *                  @OA\Property(
+     *                     property="description",
+     *                     description="Product description",
+     *                     type="string"
+     *                  ),
+     *                  @OA\Property(
+     *                     property="metadata",
+     *                     description="Product metadata",
+     *                     type="object",
+     *                     default={}
      *                  ),
      *             )
      *         )
@@ -68,19 +77,23 @@ class PaymentsController extends Controller
     public function create(Request $request)
     {
         $validated = Validator::make($request->all(), [
-            'type' => Rule::in(['credit_card','cash_on_delivery', 'bank_transfer']),
-            'details' => 'required|JSON',
+            'title' => 'required',
+            'category_uuid' => 'required',
+            'price' => 'required|numeric',
+            'description' => 'required',
+            'metadata' => 'required|JSON',
         ]);
 
-
         if (!$validated->fails()) {
-            $details = json_decode($request->details, true);
-            $payment = new Payment();
-                $payment->uuid = (string) Str::uuid();
-                $payment->type = $request->type;
-                $payment->title = $request->title;
-                $payment->details = $details;
-            $payment->save();
+            $metadata = json_decode($request->metadata, true);
+            $product = new Product();
+            $product->uuid = (string) Str::uuid();
+            $product->title = $request->title;
+            $product->category_uuid = $request->category_uuid;
+            $product->price = $request->price;
+            $product->description = $request->description;
+            $product->metadata = $metadata;
+            $product->save();
         } else {
             return response()->json($validated->errors(), 422);
         }
@@ -88,9 +101,9 @@ class PaymentsController extends Controller
 
     /**
      * @OA\Put(
-     *     tags={"Payments"},
-     *     path="/api/v1/payment/{uuid}",
-     *     summary="Update Payment",
+     *     tags={"Products"},
+     *     path="/api/v1/product/{uuid}",
+     *     summary="Update Product",
      *     security={ {"bearer": {}} },
      *     @OA\Parameter(
      *         name="uuid",
@@ -104,12 +117,33 @@ class PaymentsController extends Controller
      *          @OA\MediaType(
      *              mediaType="application/x-www-form-urlencoded",
      *              @OA\Schema(
-     *                  required={"title"},
+     *                  required={"title","category_uuid","price","description"},
      *                  type="object",
      *                  @OA\Property(
      *                     property="title",
-     *                     description="Payment title",
+     *                     description="Product title",
      *                     type="string"
+     *                  ),
+     *                  @OA\Property(
+     *                     property="category_uuid",
+     *                     description="Category UUID",
+     *                     type="string"
+     *                  ),
+     *                  @OA\Property(
+     *                     property="price",
+     *                     description="Product price",
+     *                     type="number"
+     *                  ),
+     *                  @OA\Property(
+     *                     property="description",
+     *                     description="Product description",
+     *                     type="string"
+     *                  ),
+     *                  @OA\Property(
+     *                     property="metadata",
+     *                     description="Product metadata",
+     *                     type="object",
+     *                     default={}
      *                  ),
      *             )
      *         )
@@ -140,15 +174,24 @@ class PaymentsController extends Controller
     {
         $validated = Validator::make($request->all(), [
             'title' => 'required',
+            'category_uuid' => 'required',
+            'price' => 'required|numeric',
+            'description' => 'required',
+            'metadata' => 'required|JSON',
         ]);
 
         if (!$validated->fails()) {
-            $Payment = Payment::where('uuid', $uuid)->first();
-            if ($Payment) {
-                $Payment->title = $request->title;
-                $Payment->update();
+            $product = Product::where('uuid', $uuid)->first();
+            if ($product) {
+                $metadata = json_decode($request->metadata, true);
+                $product->title = $request->title;
+                $product->category_uuid = $request->category_uuid;
+                $product->price = $request->price;
+                $product->description = $request->description;
+                $product->metadata = $metadata;
+                $product->update();
             } else {
-                return response()->json('Inexisting Payment', 404);
+                return response()->json('Inexisting product', 404);
             }
         } else {
             return response()->json($validated->errors(), 422);
@@ -157,9 +200,9 @@ class PaymentsController extends Controller
 
     /**
      * @OA\Delete(
-     *     tags={"Payments"},
-     *     path="/api/v1/payment/{uuid}",
-     *     summary="Delete Payment",
+     *     tags={"Products"},
+     *     path="/api/v1/product/{uuid}",
+     *     summary="Delete Product",
      *     security={ {"bearer": {}} },
      *     @OA\Parameter(
      *         name="uuid",
@@ -193,11 +236,11 @@ class PaymentsController extends Controller
      */
     public function delete($uuid)
     {
-        $Payment = Payment::where('uuid', $uuid)->first();
-        if ($Payment) {
-            $Payment->delete();
+        $product = Product::where('uuid', $uuid)->first();
+        if ($product) {
+            $product->delete();
         } else {
-            return response()->json("inexisting Payment", 404);
+            return response()->json("inexisting product", 404);
         }
 
         return response()->json([]);
@@ -205,9 +248,9 @@ class PaymentsController extends Controller
 
     /**
      * @OA\Get(
-     *     tags={"Payments"},
-     *     path="/api/v1/payment/{uuid}",
-     *     summary="Fetch a Payment",
+     *     tags={"Products"},
+     *     path="/api/v1/product/{uuid}",
+     *     summary="Fetch a product",
      *     @OA\Parameter(
      *         name="uuid",
      *         in="path",
@@ -237,20 +280,20 @@ class PaymentsController extends Controller
      *     ),
      * )
      */
-    public function getPayment($uuid)
+    public function getProduct($uuid)
     {
-        $Payment = Payment::where('uuid', $uuid)->first();
-        if (!$Payment) {
-            return response()->json("Inexisting Payment", 404);
+        $product = Product::with('brand', 'category')->where('uuid', $uuid)->first();
+        if (!$product) {
+            return response()->json("Inexisting product", 404);
         }
-        return response()->json($Payment);
+        return response()->json($product);
     }
 
-                /**
+    /**
      * @OA\Get(
-     *     tags={"Payments"},
-     *     path="/api/v1/payments",
-     *     summary="List all Payments",
+     *     tags={"Products"},
+     *     path="/api/v1/products",
+     *     summary="List all products",
      *     @OA\Parameter(
      *         name="page",
      *         in="query",
@@ -279,6 +322,34 @@ class PaymentsController extends Controller
      *             type="boolean",
      *         ),
      *     ),
+     *     @OA\Parameter(
+     *         name="category",
+     *         in="query",
+     *         @OA\Schema(
+     *             type="string",
+     *         ),
+     *     ),
+     *     @OA\Parameter(
+     *         name="price",
+     *         in="query",
+     *         @OA\Schema(
+     *             type="number",
+     *         ),
+     *     ),
+     *     @OA\Parameter(
+     *         name="brand",
+     *         in="query",
+     *         @OA\Schema(
+     *             type="string",
+     *         ),
+     *     ),
+     *     @OA\Parameter(
+     *         name="title",
+     *         in="query",
+     *         @OA\Schema(
+     *             type="string",
+     *         ),
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="OK",
@@ -301,23 +372,41 @@ class PaymentsController extends Controller
      *     ),
      * )
      */
-    public function payments(Request $request)
+    public function products(Request $request)
     {
-        $payment = new Payment();
+        DB::enableQueryLog();
+        $products = Product::with('brand', 'category');
 
-        if ($request->has('sortBy')) {
+        if ($request->filled('sortBy')) {
             if (($request->desc ?? false) == 'true') {
-                $payment = $payment->orderBy($request->sortBy, 'desc');
+                $products = $products->orderBy($request->sortBy, 'desc');
             } else {
-                $payment = $payment->orderBy($request->sortBy);
+                $products = $products->orderBy($request->sortBy);
             }
         }
 
+        if ($request->filled('category')) {
+            $products = $products->whereHas('category', function ($query) {
+                $query->where('title', request('category'));
+            });
+        }
 
-        $payment = $payment->paginate($request->limit ?? 10);
+        if ($request->filled('price')) {
+            $products = $products->where('price', $request->price);
+        }
 
-        
+        if ($request->filled('brand')) {
+            $products = $products->leftJoin('brands', DB::raw('brands.uuid'), 'metadata->brand')->where('brands.title', request('brand'))->select('products.*');
+        }
 
-        return response()->json($payment);
+        if ($request->filled('title')) {
+            $products = $products->where('products.title', $request->title);
+        }
+
+        $products = $products->paginate($request->limit ?? 10);
+
+
+
+        return response()->json($products);
     }
 }
