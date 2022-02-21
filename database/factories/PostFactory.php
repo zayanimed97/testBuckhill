@@ -18,7 +18,7 @@ class PostFactory extends Factory
         return [
             'uuid' => $this->faker->uuid(),
             'title' => $title,
-            'title' => Str::slug($title),
+            'slug' => Str::slug($title),
             'content' => $this->faker->realTextBetween(120, 300),
             'metadata' => '{"image": "a4b25233-cf6b-3864-b357-dc43e70a3b78", "author": "'.$this->faker->name().'"}'
         ];
