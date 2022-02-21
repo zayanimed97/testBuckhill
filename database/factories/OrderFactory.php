@@ -40,7 +40,7 @@ class OrderFactory extends Factory
             $prod = Arr::random(array_keys($products));
             $quant = rand(1,10);
             array_push($items, ['uuid'=> $prod, 'quantity' => $quant]);
-            array_push($sum, $products[$prod] * $quant);
+            array_push($sum, floatVal($products[$prod]) * floatVal($quant));
         }
         return [
             'uuid' => $this->faker->uuid(),

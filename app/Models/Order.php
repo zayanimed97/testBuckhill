@@ -22,17 +22,17 @@ class Order extends Model
      
     public function status()
     {
-        return $this->hasOne(OrderStatus::class, 'id', 'order_status_id');
+        return $this->hasOne(OrderStatus::class, 'uuid', 'order_status_id');
     }
 
     public function user()
     {
-        return $this->hasOne(User::class, 'id', 'user_id');
+        return $this->hasOne(User::class, 'uuid', 'user_id');
     }
 
     public function payment()
     {
-        return $this->hasOne(Payment::class, 'id', 'payment_id');
+        return $this->hasOne(Payment::class, 'uuid', 'payment_id');
     }
     
     public function products_relation()
