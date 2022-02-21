@@ -289,7 +289,7 @@ class BrandsController extends Controller
     {
         $brands = new Brand();
 
-        if ($request->has('sortBy')) {
+        if ($request->filled('sortBy')) {
             if (($request->desc ?? false) == 'true') {
                 $brands = $brands->orderBy($request->sortBy, 'desc');
             } else {

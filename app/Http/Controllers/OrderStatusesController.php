@@ -287,7 +287,7 @@ class OrderStatusesController extends Controller
     {
         $orderStatuses = new OrderStatus();
 
-        if ($request->has('sortBy')) {
+        if ($request->filled('sortBy')) {
             if (($request->desc ?? false) == 'true') {
                 $orderStatuses = $orderStatuses->orderBy($request->sortBy, 'desc');
             } else {

@@ -225,7 +225,7 @@ class AdminController extends Controller
             $user = $user->where($field, $filter);
         }
 
-        if ($request->has('sortBy')) {
+        if ($request->filled('sortBy')) {
             if (($request->desc ?? false) == 'true') {
                 $user = $user->orderBy($request->sortBy, 'desc');
             } else {

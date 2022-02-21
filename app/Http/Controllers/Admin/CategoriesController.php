@@ -289,7 +289,7 @@ class CategoriesController extends Controller
     {
         $categories = new Category();
 
-        if ($request->has('sortBy')) {
+        if ($request->filled('sortBy')) {
             if (($request->desc ?? false) == 'true') {
                 $categories = $categories->orderBy($request->sortBy, 'desc');
             } else {

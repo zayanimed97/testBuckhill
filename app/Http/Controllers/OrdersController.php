@@ -304,7 +304,7 @@ class OrdersController extends Controller
     {
         $orders = new Order();
 
-        if ($request->has('sortBy')) {
+        if ($request->filled('sortBy')) {
             if (($request->desc ?? false) == 'true') {
                 $orders = $orders->orderBy($request->sortBy, 'desc');
             } else {
@@ -438,7 +438,7 @@ class OrdersController extends Controller
         //Orders List
         $orders = Order::with('status', 'user', 'products_relation');
 
-        if ($request->has('sortBy')) {
+        if ($request->filled('sortBy')) {
             if (($request->desc ?? false) == 'true') {
                 $orders = $orders->orderBy($request->sortBy, 'desc');
             } else {
@@ -459,7 +459,7 @@ class OrdersController extends Controller
         $formatResponse = 'm-d';
 
         //handle dateRange param
-        if ($request->has('dateRange')) {
+        if ($request->filled('dateRange')) {
             $range = json_decode($request->dateRange);
             // dd($range);
             if ($range->from && $range->to) {
@@ -469,7 +469,7 @@ class OrdersController extends Controller
         }
 
         //handle fixRange param
-        if ($request->has('fixRange')) {
+        if ($request->filled('fixRange')) {
             if ($request->fixRange == 'monthly') {
                 $start_date = Carbon::today()->subMonth();
                 $end_date = Carbon::today()->addDay();
@@ -716,7 +716,7 @@ class OrdersController extends Controller
     public function shipmentLocator(request $request)
     {
         //handle dateRange param
-        if ($request->has('dateRange')) {
+        if ($request->filled('dateRange')) {
             $range = json_decode($request->dateRange);
             // dd($range);
             if ($range->from && $range->to) {
@@ -726,7 +726,7 @@ class OrdersController extends Controller
         }
 
         //handle fixRange param
-        if ($request->has('fixRange')) {
+        if ($request->filled('fixRange')) {
             if ($request->fixRange == 'monthly') {
                 $start_date = Carbon::today()->subMonth();
                 $end_date = Carbon::today()->addDay();
@@ -740,7 +740,7 @@ class OrdersController extends Controller
         }
         $orders = Order::with('status', 'user', 'products_relation');
 
-        if ($request->has('sortBy')) {
+        if ($request->filled('sortBy')) {
             if (($request->desc ?? false) == 'true') {
                 $orders = $orders->orderBy($request->sortBy, 'desc');
             } else {
@@ -750,10 +750,10 @@ class OrdersController extends Controller
         if (isset($start_date) && isset($end_date)) {
             $orders = $orders->whereBetween('created_at', [$start_date->toDateString(), $end_date->toDateString()]);
         }
-        if ($request->has('orderUuid')) {
+        if ($request->filled('orderUuid')) {
             $orders = $orders->where('uuid', $request->orderUuid);
         }
-        if ($request->has('customerUuid')) {
+        if ($request->filled('customerUuid')) {
             $orders = $orders->where('user_id', $request->customerUuid);
         }
         $orders = $orders->whereNotNull('shipped_at')->paginate($request->limit ?? 10);

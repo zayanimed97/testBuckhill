@@ -305,7 +305,7 @@ class PaymentsController extends Controller
     {
         $payment = new Payment();
 
-        if ($request->has('sortBy')) {
+        if ($request->filled('sortBy')) {
             if (($request->desc ?? false) == 'true') {
                 $payment = $payment->orderBy($request->sortBy, 'desc');
             } else {

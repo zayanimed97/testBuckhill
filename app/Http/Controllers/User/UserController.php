@@ -554,7 +554,7 @@ class UserController extends Controller
     {
         $orders = Order::where('user_id', $request->session()->get('user')['id']);
 
-        if ($request->has('sortBy')) {
+        if ($request->filled('sortBy')) {
             if (($request->desc ?? false) == 'true') {
                 $orders = $orders->orderBy($request->sortBy, 'desc');
             } else {

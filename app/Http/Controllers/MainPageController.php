@@ -74,7 +74,7 @@ class MainPageController extends Controller
     {
         $promotions = new Promotion;
 
-        if ($request->has('sortBy')) {
+        if ($request->filled('sortBy')) {
             if (($request->desc ?? false) == 'true') {
                 $promotions = $promotions->orderBy($request->sortBy, 'desc');
             } else {
@@ -82,7 +82,7 @@ class MainPageController extends Controller
             }
         }
 
-        if ($request->has('valid') && $request->valid == 'true') {
+        if ($request->filled('valid') && $request->valid == 'true') {
             $promotions = $promotions->whereRaw("'".date('Y-m-d').'"' ." between IF(JSON_VALID(metadata), JSON_UNQUOTE( JSON_EXTRACT(metadata, '$.valid_from')),'') and IF(JSON_VALID(metadata), JSON_UNQUOTE( JSON_EXTRACT(metadata, '$.valid_to')),'')");
         }
 
@@ -152,7 +152,7 @@ class MainPageController extends Controller
     {
         $posts = new Post();
 
-        if ($request->has('sortBy')) {
+        if ($request->filled('sortBy')) {
             if (($request->desc ?? false) == 'true') {
                 $posts = $posts->orderBy($request->sortBy, 'desc');
             } else {
