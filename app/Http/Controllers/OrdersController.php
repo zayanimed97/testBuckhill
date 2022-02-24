@@ -538,7 +538,7 @@ class OrdersController extends Controller
 
         //end Potential earnings widget
 
-        return response()->json(['orders' => $orders]);
+        return response()->json(['orders' => $orders, 'chartData' => $all_dates, 'totalEarning' => $totalEarning, 'ordersThisMonth' => $OrdersThisMonth, 'potentialEarning'=>$potentialEarning]);
     }
 
 
